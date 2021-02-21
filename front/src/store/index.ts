@@ -1,5 +1,5 @@
 import { createStore, combineReducers } from "redux";
-import { profileReducer } from "./profile/reducerPlan";
+import { profileReducer } from "./profile/profileReducer";
 import { RootState } from "../domain/entity/rootState"
 
 const store = createStore(
