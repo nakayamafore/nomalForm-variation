@@ -1,12 +1,13 @@
 import { createStore, combineReducers, applyMiddleware, compose } from "redux";
-import thunk from "redux-thunk"
+import createSagaMiddleware from 'redux-saga'
 import { profileReducer } from "./profile/profileReducer";
 import { RootState } from "../domain/entity/rootState"
 
+const sagaMiddleware = createSagaMiddleware();
 const store = createStore(
     combineReducers<RootState>({ profile: profileReducer }),
     compose(
-        applyMiddleware(thunk),
+        applyMiddleware(sagaMiddleware),
         (window as any).__REDUX_DEVTOOLS_EXTENSION__ && (window as any).__REDUX_DEVTOOLS_EXTENSION__()
     )
 );
