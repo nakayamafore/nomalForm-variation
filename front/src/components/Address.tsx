@@ -7,6 +7,7 @@ import { Address as IAddress } from "../domain/entity/address"
 import { setAddress } from "../store/profile/actions"
 import useStyles from "./styles"
 import { isPostalcode } from "../domain/services/address"
+import { searchAddressFromPostalcode } from "../store/profile/effect"
 
 const Address = () => {
     const classes = useStyles();
@@ -20,6 +21,7 @@ const Address = () => {
         console.log(code)
         if (!isPostalcode(code)) return;
         dispatch(setAddress({ postalcode: code }))
+        dispatch(searchAddressFromPostalcode(code))
     }
     return (
         <>

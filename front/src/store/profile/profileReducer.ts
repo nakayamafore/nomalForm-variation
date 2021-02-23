@@ -1,6 +1,5 @@
 import { Reducer } from 'redux'
 import { Profile } from "../../domain/entity/profile"
-import { Address } from "../../domain/entity/address"
 import { ProfileAction, ProfileActionType } from "./actions";
 
 export const initialState: Profile = {
@@ -35,6 +34,10 @@ export const profileReducer: Reducer<Profile, ProfileAction> = (
             console.log(address)
             console.log(state)
             return { ...state, ...address }
+        case ProfileActionType.SEARCH_ADDRESS:
+            console.log(ProfileActionType.SEARCH_ADDRESS)
+            console.log(state)
+            return { ...state, ...{ address: { ...state.address, ...action.address } } }
         default: {
             console.log("default")
             return state;

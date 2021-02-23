@@ -3,7 +3,8 @@ import { Address } from "../../domain/entity/address"
 
 export const ProfileActionType = {
     SET: 'SET_PROFILE',
-    SET_ADDRESS: 'SET_ADDRESS'
+    SET_ADDRESS: 'SET_ADDRESS',
+    SEARCH_ADDRESS: 'SEARCH_ADDRESS'
 } as const
 
 
@@ -23,6 +24,12 @@ export const setProfile = (profile: Partial<Profile>): ProfileAction => (
 export const setAddress = (address: Partial<Address>): ProfileAction => (
     {
         type: ProfileActionType.SET_ADDRESS,
+        address
+    }
+)
+export const searchAddress = (address: Partial<Address>): ProfileAction => (
+    {
+        type: ProfileActionType.SEARCH_ADDRESS,
         address
     }
 )
