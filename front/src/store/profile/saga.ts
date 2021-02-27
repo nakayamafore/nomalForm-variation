@@ -1,7 +1,7 @@
 import { call, put, takeLatest } from 'redux-saga/effects'
 import { ProfileAction, ProfileActionType, searchAddress, searchaddressResult } from "./actions"
-import { Address } from "../../domain/entity/address"
-import { isCompletePostalcode, sanitizePostalcode } from "../../domain/services/address"
+import { isCompletePostalcode } from "../../domain/services/address"
+import getAddress from "../../domain/services/getAddress"
 
 export const searchAddressFromPostalcode = (code: string) => {
     console.log("===searchAddressFromPostalcode");
@@ -20,21 +20,10 @@ function* runSearchAddress(action: ProfileAction) {
         console.log("not completed code: " + postalCode);
         return;
     }
-
-    const url: string = `https://apis.postcode-jp.com/api/v4/postcodes?apikey=Png09is6MrtgOwA2npu4WuzDjgfVE27AhBGjNT3&postcode=${sanitizePostalcode(postalCode)}`
-    //const url: string = `http://localhost:8080/classrooms`
     try {
-        const result = yield call(fetch, url, {
-            mode: 'cors'
-        });
-        console.log("result");
-        console.log(result);
-        if (!result.data && !result.data[0]) return;
-
-        const address: Partial<Address> = {
-            prefecture: result.data[0].pref,
-            city: result.data[0].city + result.data[0].town
-        }
+        console.log("==getAddress call");
+        const address = yield call(getAddress, postalCode);
+        console.log("==searchaddressResult call");
         console.log(address);
         yield put(searchaddressResult(address))
     } catch (error) {

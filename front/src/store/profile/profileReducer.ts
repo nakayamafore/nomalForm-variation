@@ -40,6 +40,12 @@ export const profileReducer: Reducer<Profile, ProfileAction> = (
             console.log(addressFor)
             console.log(state)
             return { ...state, ...addressFor }
+        case ProfileActionType.SEARCH_ADDRESS_RESULT:
+            console.log(ProfileActionType.SEARCH_ADDRESS_RESULT)
+            const addressResult: Partial<Profile> = { address: { ...state.address, ...action.address } }
+            console.log(addressResult)
+            console.log(state)
+            return { ...state, ...addressResult }
         default: {
             console.log("default")
             return state;
