@@ -14,6 +14,7 @@ export type ProfileAction = {
     type: ValueOf<typeof ProfileActionType>;
     profile?: Partial<Profile>;
     address?: Partial<Address>;
+    postalCode?: string;
 }
 
 export const setProfile = (profile: Partial<Profile>): ProfileAction => (
@@ -28,10 +29,10 @@ export const setAddress = (address: Partial<Address>): ProfileAction => (
         address
     }
 )
-export const searchAddress = (address: Partial<Address>): ProfileAction => (
+export const searchAddress = (postalCode: string): ProfileAction => (
     {
         type: ProfileActionType.SEARCH_ADDRESS,
-        address
+        postalCode
     }
 )
 export const searchaddressResult = (address: Partial<Address>): ProfileAction => (

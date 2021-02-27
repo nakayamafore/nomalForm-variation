@@ -1,28 +1,49 @@
-import { Dispatch } from "redux"
-import { all, call, fork, put, takeLatest } from 'redux-saga/effects'
-import { ProfileActionType, searchAddress } from "./actions"
+import { call, put, takeLatest } from 'redux-saga/effects'
+import { ProfileAction, ProfileActionType, searchAddress, searchaddressResult } from "./actions"
 import { Address } from "../../domain/entity/address"
 import { isCompletePostalcode, sanitizePostalcode } from "../../domain/services/address"
 
-export const searchAddressFromPostalcode = (code: string) => async (dispach: Dispatch) => {
+export const searchAddressFromPostalcode = (code: string) => {
+    console.log("===searchAddressFromPostalcode");
     if (!isCompletePostalcode(code)) {
         console.log("not completed code: " + code);
         return;
     }
-
-    console.log("effect-postcode-search")
-    const res = await fetch(`https://apis.postcode-jp.com/api/v3/postcodes?apikey=Png09is6MrtgOwA2npu4WuzDjgfVE27AhBGjNT3&postcode=${sanitizePostalcode(code)}`)
-    const result = await res.json();
-    if (!result.data && !result.data[0]) return;
-    console.log(result);
-
-    const address: Partial<Address> = {
-        prefecture: result.data[0].pref,
-        city: result.data[0].city + result.data[0].town
+    console.log(ProfileActionType.SEARCH_ADDRESS);
+    put(searchAddress(code))
+}
+function* runSearchAddress(action: ProfileAction) {
+    console.log("===runSearchAddress");
+    const postalCode = action.postalCode;
+    if (typeof postalCode === 'undefined') return;
+    if (!isCompletePostalcode(postalCode)) {
+        console.log("not completed code: " + postalCode);
+        return;
     }
-    console.log(address);
-    dispach(searchAddress(address))
+
+    const url: string = `https://apis.postcode-jp.com/api/v4/postcodes?apikey=Png09is6MrtgOwA2npu4WuzDjgfVE27AhBGjNT3&postcode=${sanitizePostalcode(postalCode)}`
+    //const url: string = `http://localhost:8080/classrooms`
+    try {
+        const result = yield call(fetch, url, {
+            mode: 'cors'
+        });
+        console.log("result");
+        console.log(result);
+        if (!result.data && !result.data[0]) return;
+
+        const address: Partial<Address> = {
+            prefecture: result.data[0].pref,
+            city: result.data[0].city + result.data[0].town
+        }
+        console.log(address);
+        yield put(searchaddressResult(address))
+    } catch (error) {
+        console.log("===searchAddress-error")
+        console.log(error)
+    }
 }
 export function* watchSearchAddress() {
-    yield takeLatest("SEARCH_ADDRESS", searchAddressFromPostalcode)
+    console.log("===watchSearchAddress");
+    yield takeLatest(ProfileActionType.SEARCH_ADDRESS, runSearchAddress)
 }
+export default watchSearchAddress;
