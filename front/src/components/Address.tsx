@@ -1,5 +1,5 @@
 import React from "react";
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 import { useDispatch, useSelector } from "react-redux"
 import { TextField } from "@material-ui/core"
 import { PROFILE } from "../domain/services/profile"
@@ -7,14 +7,16 @@ import { RootState } from "../domain/entity/rootState"
 import { Address as IAddress } from "../domain/entity/address"
 import { setAddress } from "../store/profile/actions"
 import useStyles from "./styles"
-import { isPostalcode, isCompletePostalcode } from "../domain/services/address"
-import getAddress from "../domain/services/getAddress";
+import { isPostalcode } from "../domain/services/address"
+import useGetAddress from "../hooks/use-get-addres"
 
 const Address: FC = () => {
     const classes = useStyles();
     const profile = useSelector((state: RootState) => state.profile);
     const [postalCode, setPostalCode] = useState<string>();
     const dispatch = useDispatch();
+    useGetAddress(postalCode as string)
+
     const handleAddressChange = (member: Partial<IAddress>) => {
         dispatch(setAddress(member))
     }
@@ -25,16 +27,7 @@ const Address: FC = () => {
         dispatch(setAddress({ postalcode: code }))
         setPostalCode(code)
     }
-    useEffect(() => {
-        const load = async (): Promise<void> => {
-            if (typeof postalCode === 'undefined') return;
-            const addressResult = await getAddress(postalCode)
-            dispatch(setAddress(addressResult))
-        }
-        console.log("==useEffect-do-load")
-        if (!isCompletePostalcode(postalCode as string)) return;
-        load()
-    }, [dispatch, postalCode])
+
     return (
         <>
             <TextField fullWidth className={classes.formField} label={PROFILE.ADDRESS.POSTALCODE}
