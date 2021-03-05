@@ -7,6 +7,7 @@ const getAddress = async (postalCode: string): Promise<Partial<Address>> => {
   const response = await fetch(url);
   const result = (await response.json()) as unknown;
   console.log("==getAddress");
+  console.log(result);
   if (!isAddressApiRes(result)) {
     return {
       prefecture: "", city: ""
@@ -39,6 +40,6 @@ const isAddressApiData = (arg: unknown): arg is AddressApiRes => {
 
 const isAddressApiRes = (args: unknown): args is AddressApiRes => {
   const res = args as AddressApiRes;
-  return res !== null && !res.data.some((arg) => !isAddressApiData(arg));
+  return res !== null && !res.data.every((arg) => !isAddressApiData(arg));
 }
 export default getAddress;
